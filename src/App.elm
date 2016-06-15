@@ -71,7 +71,7 @@ viewNav model =
     [ div [ class "col s12" ]
       [ div [ class "nav-wrapper" ]
         [ a [ href "#", class "brand-logo" ]
-            [ text "Leaderboard" ]
+          [ text "Leaderboard" ]
         , viewSortDropdown model.sortOrder
         , span [ class "right" ]
           [ text <| String.append "Players: " <| toString <| List.length model.scores ]
