@@ -53,8 +53,17 @@ view model =
         [ viewNav model
         , table [ class "centered striped z-depth-1" ]
           [ tbody [] <| viewScores model ]
+        , viewKey
         ]
       ]
+    ]
+
+viewKey : Html Msg
+viewKey =
+  p []
+    [ viewIconLabel "perm_identity" "= Name"
+    , text ", "
+    , viewIconLabel "info" "= Score %"
     ]
 
 viewNav : Model -> Html Msg
