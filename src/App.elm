@@ -16,10 +16,10 @@ import Time
 type SortOrder = Score | Name
 
 type alias Entry =
-  { name: String
+  { name : String
   , id : String
   , loopid : Int
-  , gamesPlayed: Int
+  , gamesPlayed : Int
   , gamesWon : Int
   }
 
@@ -106,8 +106,7 @@ viewSortIcon order =
 viewSortDropdown : SortOrder -> Html Msg
 viewSortDropdown order =
   div [ class "fixed-action-btn" ]
-    [ a
-      [ class "btn-floating btn-large blue" ] [ viewSortIcon order ]
+    [ a [ class "btn-floating btn-large blue" ] [ viewSortIcon order ]
     , ul []
       [ li []
         [ a [ onClick (ChangeSort Name), class "btn-floating" ]
