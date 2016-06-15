@@ -32,7 +32,10 @@ init : (Model, Cmd Msg)
 init = (Model [] Score, getScores)
 
 getWinP : Entry -> Float
-getWinP entry = (toFloat entry.gamesWon) / (toFloat entry.gamesPlayed)
+getWinP entry =
+  case entry.gamesPlayed of
+    0 -> 0
+    _ -> (toFloat entry.gamesWon) / (toFloat entry.gamesPlayed)
 
 sortByScore : Entry -> Entry -> Order
 sortByScore a b = compare (getWinP b) (getWinP a)
