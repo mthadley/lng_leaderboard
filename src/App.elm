@@ -35,7 +35,7 @@ getWinP : Entry -> Float
 getWinP entry = (toFloat entry.gamesWon) / (toFloat entry.gamesPlayed)
 
 sortByScore : Entry -> Entry -> Order
-sortByScore a b = compare (getWinP a) (getWinP b)
+sortByScore a b = compare (getWinP b) (getWinP a)
 
 sortByName : Entry -> Entry -> Order
 sortByName a b = compare a.name b.name
