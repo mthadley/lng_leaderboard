@@ -1,0 +1,19 @@
+{
+  "name": "dicey",
+  "version": "0.1.0",
+  "description": "LiferaNameGame Leaderboard",
+  "main": "index.js",
+  "scripts": {
+    "build": "webpack",
+    "watch": "webpack --watch",
+    "dev": "webpack-dev-server --port 3000"
+  },
+  "author": "Michael Hadley",
+  "license": "MIT",
+  "devDependencies": {
+    "elm-webpack-loader": "^3.0.3",
+    "file-loader": "^0.8.5",
+    "webpack": "^1.13.1",
+    "webpack-dev-server": "^1.14.1"
+  }
+}
