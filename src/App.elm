@@ -4,12 +4,12 @@ import Html exposing (..)
 import Html.Attributes exposing (attribute, class, href, id)
 import Html.Events exposing (onClick)
 import Http
+import Icon exposing (..)
 import Json.Decode exposing (..)
 import Result
 import String
 import Task
 import Time
-import Icon exposing (..)
 
 -- MODEL
 
@@ -48,7 +48,8 @@ view model =
     [ div [ class "row" ]
       [ div [ class "col s12" ]
         [ viewNav model
-        , ul [ class "collection z-depth-1" ] <| viewScores model
+        , table [ class "centered striped z-depth-1" ]
+          [ tbody [] <| viewScores model ]
         ]
       ]
     ]
@@ -61,6 +62,8 @@ viewNav model =
         [ a [ href "#", class "brand-logo" ]
             [ text "Leaderboard" ]
         , viewSortDropdown model.sortOrder
+        , span [ class "right" ]
+          [ text <| String.append "Players: " <| toString <| List.length model.scores ]
         ]
       ]
     ]
@@ -77,10 +80,10 @@ viewScores model =
 
 viewScore : Int -> Entry -> Html Msg
 viewScore i entry =
-  li [ class "collection-item" ]
-    [ span [] [ text <| toString i ]
-    , viewIconLabel "perm_identity" entry.name
-    , viewIconLabel "info" <| String.left 4 <| toString <| getWinP entry
+  tr []
+    [ td [] [ span [] [ text <| toString (i + 1) ] ]
+    , td [] [ viewIconLabel "perm_identity" entry.name ]
+    , td [] [ viewIconLabel "info" <| String.left 4 <| toString <| getWinP entry ]
     ]
 
 viewSortIcon : SortOrder -> Html Msg
