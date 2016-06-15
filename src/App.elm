@@ -62,7 +62,6 @@ viewKey : Html Msg
 viewKey =
   p []
     [ viewIconLabel "perm_identity" "= Name"
-    , text ", "
     , viewIconLabel "info" "= Score %"
     ]
 
