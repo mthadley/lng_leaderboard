@@ -4,7 +4,7 @@
 
 A simple leaderboard app for the LiferayNameGame.
 
-Run the following commands to try it out:
+Run the following commands:
 
 ```console
 $ npm install -g elm
