@@ -20,6 +20,12 @@ type SortOrder
     | Name
 
 
+type Polling
+    = Starting
+    | Running
+    | Stopped
+
+
 type alias Entry =
     { name : String
     , id : String
@@ -30,14 +36,15 @@ type alias Entry =
 
 
 type alias Model =
-    { scores : List Entry
+    { polling : Polling
+    , scores : List Entry
     , sortOrder : SortOrder
     }
 
 
 init : ( Model, Cmd Msg )
 init =
-    ( Model [] Score, getScores )
+    ( Model Starting [] Score, getScores )
 
 
 getWinP : Entry -> Float
@@ -66,15 +73,44 @@ sortByName a b =
 
 view : Model -> Html Msg
 view model =
-    div [ class "container" ]
-        [ div [ class "row" ]
-            [ div [ class "col s12" ]
-                [ viewNav model
-                , table [ class "centered striped z-depth-1" ]
-                    [ tbody [] <| viewScores model ]
-                , viewKey
+    let
+        tableContent =
+            case model.polling of
+                Stopped ->
+                    [ viewError ]
+
+                Starting ->
+                    [ viewLoading ]
+
+                Running ->
+                    viewScores model
+    in
+        div [ class "container" ]
+            [ div [ class "row" ]
+                [ div [ class "col s12" ]
+                    [ viewNav model
+                    , table [ class "centered striped z-depth-1" ]
+                        [ tbody [] tableContent ]
+                    , viewKey
+                    ]
                 ]
             ]
+
+
+viewError : Html Msg
+viewError =
+    tr []
+        [ td []
+            [ text "There was an error contacting the server. "
+            , a [ href "javascript:void(0)", onClick RestartPolling ] [ text "Retry" ]
+            ]
+        ]
+
+
+viewLoading : Html Msg
+viewLoading =
+    tr []
+        [ td [] [ text "Loading..." ]
         ]
 
 
@@ -161,25 +197,29 @@ type Msg
     | GetScores
     | GetScoresSuccess (List Entry)
     | GetScoresFailure Http.Error
+    | RestartPolling
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         Noop ->
-            ( model, Cmd.none )
+            model ! []
 
         ChangeSort order ->
-            ( { model | sortOrder = order }, Cmd.none )
+            { model | sortOrder = order } ! []
 
         GetScores ->
-            ( model, getScores )
+            { model | polling = Running } ! [ getScores ]
 
         GetScoresSuccess scores ->
-            ( { model | scores = scores }, Cmd.none )
+            { model | scores = scores } ! []
 
         GetScoresFailure _ ->
-            ( model, Cmd.none )
+            { model | polling = Stopped } ! []
+
+        RestartPolling ->
+            { model | polling = Starting } ! []
 
 
 
@@ -213,4 +253,9 @@ decodeEntry =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Time.every (2 * Time.second) (\t -> GetScores)
+    case model.polling of
+        Stopped ->
+            Sub.none
+
+        _ ->
+            Time.every (2 * Time.second) (\t -> GetScores)
