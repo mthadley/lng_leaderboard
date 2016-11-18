@@ -11,7 +11,7 @@
   "author": "Michael Hadley",
   "license": "MIT",
   "devDependencies": {
-    "elm-webpack-loader": "^3.0.3",
+    "elm-webpack-loader": "^3.0.6",
     "file-loader": "^0.8.5",
     "webpack": "^1.13.1",
     "webpack-dev-server": "^1.14.1"

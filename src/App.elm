@@ -44,7 +44,7 @@ type alias Model =
 
 init : ( Model, Cmd Msg )
 init =
-    ( Model Starting [] Score, getScores )
+    ( Model Starting [] Score, requestScores )
 
 
 getWinP : Entry -> Float
@@ -194,9 +194,8 @@ viewSortDropdown order =
 type Msg
     = Noop
     | ChangeSort SortOrder
-    | GetScores
-    | GetScoresSuccess (List Entry)
-    | GetScoresFailure Http.Error
+    | RequestScores
+    | RecieveScores (Result Http.Error (List Entry))
     | RestartPolling
 
 
@@ -209,13 +208,13 @@ update msg model =
         ChangeSort order ->
             { model | sortOrder = order } ! []
 
-        GetScores ->
-            { model | polling = Running } ! [ getScores ]
+        RequestScores ->
+            { model | polling = Running } ! [ requestScores ]
 
-        GetScoresSuccess scores ->
+        RecieveScores (Ok scores) ->
             { model | scores = scores } ! []
 
-        GetScoresFailure _ ->
+        RecieveScores (Err _) ->
             { model | polling = Stopped } ! []
 
         RestartPolling ->
@@ -231,9 +230,9 @@ apiUrl =
     "http://liferay.io/loopgame/players/"
 
 
-getScores : Cmd Msg
-getScores =
-    Task.perform GetScoresFailure GetScoresSuccess (Http.get decodeScores apiUrl)
+requestScores : Cmd Msg
+requestScores =
+    Http.send RecieveScores <| Http.get apiUrl decodeScores
 
 
 decodeScores : Decoder (List Entry)
@@ -243,12 +242,12 @@ decodeScores =
 
 decodeEntry : Decoder Entry
 decodeEntry =
-    object5 Entry
-        ("name" := string)
-        ("id" := string)
-        ("loopId" := int)
-        ("gamesPlayed" := int)
-        ("gamesWon" := int)
+    map5 Entry
+        (field "name" string)
+        (field "id" string)
+        (field "loopId" int)
+        (field "gamesPlayed" int)
+        (field "gamesWon" int)
 
 
 subscriptions : Model -> Sub Msg
@@ -258,4 +257,4 @@ subscriptions model =
             Sub.none
 
         _ ->
-            Time.every (2 * Time.second) (\t -> GetScores)
+            Time.every (2 * Time.second) (\_ -> RequestScores)
